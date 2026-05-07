@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Та битгий уурлаарай хөлөгт тоглоом</title>
+ <style>
+   :root {
+     --sky1: #6ee7f9;
+     --sky2: #60a5fa;
+     --grass1: #86efac;
+     --grass2: #34d399;
+     --sun1: #fde68a;
+     --sun2: #fbbf24;
+     --pink1: #f9a8d4;
+     --pink2: #f472b6;
+     --purple1: #c084fc;
+     --purple2: #8b5cf6;
+     --orange1: #fb923c;
+     --orange2: #f97316;
+     --dark: #1f2937;
+     --ink: #172033;
+     --panel: rgba(255,255,255,0.82);
+     --panel-strong: rgba(255,255,255,0.92);
+     --shadow: 0 16px 35px rgba(23, 32, 51, 0.18);
+     --radius: 24px;
+     --radius-sm: 18px;
+   }
+
+
+
+
+   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+
+
+   html { scroll-behavior: smooth; }
+
+
+
+
+   body {
+     font-family: "Arial", sans-serif;
+     color: var(--ink);
+     overflow-x: hidden;
+     background:
+       radial-gradient(circle at 10% 10%, rgba(255,255,255,0.75) 0 5%, transparent 6%),
+       radial-gradient(circle at 85% 12%, rgba(255,255,255,0.65) 0 4%, transparent 5%),
+       radial-gradient(circle at 75% 78%, rgba(255,255,255,0.45) 0 4%, transparent 5%),
+       linear-gradient(180deg, #89f0ff 0%, #6dc8ff 18%, #73e6b5 45%, #ffe88e 72%, #ffb86b 100%);
+     min-height: 100vh;
+   }
+
+
+
+
+   body::before {
+     content: "";
+     position: fixed;
+     inset: 0;
+     background:
+       linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+       linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+     background-size: 42px 42px;
+     opacity: 0.16;
+     pointer-events: none;
+     z-index: 0;
+   }
+
+
+
+
+   .shape {
+     position: fixed;
+     border-radius: 50%;
+     filter: blur(12px);
+     z-index: 0;
+     opacity: 0.35;
+     pointer-events: none;
+     animation: floaty 10s ease-in-out infinite alternate;
+   }
+
+
+
+
+   .shape.a {
+     width: 180px;
+     height: 180px;
+     background: rgba(250, 204, 21, 0.45);
+     top: 80px;
+     left: -40px;
+   }
+
+
+
+
+   .shape.b {
+     width: 240px;
+     height: 240px;
+     background: rgba(244, 114, 182, 0.28);
+     bottom: 60px;
+     right: -70px;
+     animation-duration: 12s;
+   }
+
+
+
+
+   .shape.c {
+     width: 140px;
+     height: 140px;
+     background: rgba(52, 211, 153, 0.26);
+     top: 46%;
+     left: 78%;
+     animation-duration: 8s;
+   }
+
+
+
+
+   @keyframes floaty {
+     from { transform: translateY(-10px) translateX(0); }
+     to { transform: translateY(18px) translateX(24px); }
+   }
+
+
+
+
+   header, nav, .container, footer, .winner-overlay, .start-overlay {
+     position: relative;
+     z-index: 1;
+   }
+
+
+
+
+   .start-overlay,
+   .winner-overlay {
+     position: fixed;
+     inset: 0;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     padding: 20px;
+     background: linear-gradient(180deg, rgba(18, 40, 74, 0.55), rgba(12, 25, 48, 0.75));
+     backdrop-filter: blur(6px);
+     transition: 0.35s ease;
+     z-index: 60;
+   }
+
+
+
+
+   .start-overlay.hidden,
+   .winner-overlay.hidden {
+     opacity: 0;
+     pointer-events: none;
+   }
+
+
+
+
+   .overlay-card {
+     width: min(900px, 96%);
+     background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.88));
+     border-radius: 34px;
+     box-shadow: 0 24px 55px rgba(0,0,0,0.25);
+     overflow: hidden;
+     border: 4px solid rgba(255,255,255,0.55);
+   }
+
+
+
+
+   .overlay-top {
+     background: linear-gradient(90deg, #60a5fa, #34d399, #fbbf24, #f472b6);
+     padding: 18px;
+     text-align: center;
+     color: white;
+     font-weight: 900;
+     letter-spacing: 1px;
+     text-shadow: 0 2px 8px rgba(0,0,0,0.22);
+   }
+
+
+
+
+   .overlay-body {
+     padding: 34px;
+     display: grid;
+     grid-template-columns: 1.05fr 0.95fr;
+     gap: 26px;
+     align-items: center;
+   }
+
+
+
+
+   .overlay-title {
+     font-size: clamp(34px, 5vw, 58px);
+     line-height: 1.02;
+     color: #17325c;
+     margin-bottom: 14px;
+     text-shadow: 0 2px 0 rgba(255,255,255,0.4);
+   }
+
+
+
+
+   .overlay-text {
+     color: #31517e;
+     font-size: 18px;
+     line-height: 1.65;
+     margin-bottom: 18px;
+   }
+
+
+
+
+   .overlay-tags {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 10px;
+     margin-bottom: 24px;
+   }
+
+
+
+
+   .overlay-tag {
+     background: linear-gradient(90deg, #dbeafe, #fef3c7);
+     color: #1e3a5f;
+     padding: 10px 14px;
+     border-radius: 999px;
+     font-weight: 700;
+     border: 1px solid rgba(23,50,92,0.1);
+   }
+
+
+
+
+   .start-preview {
+     position: relative;
+     min-height: 360px;
+     border-radius: 28px;
+     background: linear-gradient(180deg, #c8f7ff 0%, #d9ffe4 48%, #ffe9a8 100%);
+     overflow: hidden;
+     border: 3px solid rgba(255,255,255,0.55);
+     box-shadow: inset 0 0 0 3px rgba(255,255,255,0.3);
+   }
+
+
+
+
+   .preview-road {
+     position: absolute;
+     inset: 20px;
+     border-radius: 26px;
+     background:
+       radial-gradient(circle at 20% 25%, rgba(255,255,255,0.8) 0 8%, transparent 9%),
+       radial-gradient(circle at 76% 18%, rgba(255,255,255,0.72) 0 7%, transparent 8%),
+       linear-gradient(180deg, #8ef0b6, #fef08a);
+     overflow: hidden;
+   }
+
+
+
+
+   .path-piece {
+     position: absolute;
+     width: 90px;
+     height: 90px;
+     border-radius: 28px;
+     border: 4px solid rgba(255,255,255,0.8);
+     box-shadow: 0 8px 0 rgba(0,0,0,0.08);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-weight: 900;
+     color: #1f2d3f;
+     font-size: 24px;
+   }
+
+
+
+
+   .p1 { left: 18px; bottom: 28px; background: #fde68a; }
+   .p2 { left: 102px; bottom: 92px; background: #86efac; }
+   .p3 { left: 198px; bottom: 40px; background: #93c5fd; }
+   .p4 { right: 120px; top: 72px; background: #f9a8d4; }
+   .p5 { right: 22px; top: 26px; background: #c4b5fd; }
+
+
+
+
+   .preview-arrow {
+     position: absolute;
+     width: 130px;
+     height: 18px;
+     background: linear-gradient(90deg, #fb923c, #ef4444);
+     border-radius: 999px;
+     transform-origin: left center;
+     box-shadow: 0 8px 16px rgba(239,68,68,0.28);
+     animation: arrowPulse 1.3s infinite alternate;
+   }
+
+
+
+
+   .preview-arrow::after {
+     content: "";
+     position: absolute;
+     right: -16px;
+     top: -8px;
+     border-left: 22px solid #ef4444;
+     border-top: 17px solid transparent;
+     border-bottom: 17px solid transparent;
+   }
+
+
+
+
+   .arrow1 { left: 92px; bottom: 130px; transform: rotate(-18deg); }
+   .arrow2 { right: 84px; top: 120px; transform: rotate(145deg); width: 100px; }
+
+
+
+
+   @keyframes arrowPulse {
+     from { transform: scale(1) rotate(var(--rot, 0deg)); }
+     to { transform: scale(1.07) rotate(var(--rot, 0deg)); }
+   }
+
+
+
+
+   .arrow1 { --rot: -18deg; }
+   .arrow2 { --rot: 145deg; }
+
+
+
+
+   .dice-float {
+     position: absolute;
+     right: 18px;
+     bottom: 16px;
+     width: 78px;
+     height: 78px;
+     background: white;
+     border-radius: 20px;
+     border: 4px solid #1f2937;
+     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+     display: grid;
+     grid-template-columns: repeat(3, 1fr);
+     grid-template-rows: repeat(3, 1fr);
+     gap: 4px;
+     padding: 8px;
+     animation: floatDice 2s ease-in-out infinite;
+   }
+
+
+
+
+   .dice-float span {
+     width: 12px;
+     height: 12px;
+     border-radius: 50%;
+     background: #1f2937;
+     align-self: center;
+     justify-self: center;
+     opacity: 0;
+   }
+
+
+
+
+   .dice-float .p1d,
+   .dice-float .p3d,
+   .dice-float .p5d,
+   .dice-float .p7d,
+   .dice-float .p9d { opacity: 1; }
+
+
+
+
+   @keyframes floatDice {
+     0% { transform: translateY(0px) rotate(-7deg); }
+     50% { transform: translateY(-8px) rotate(4deg); }
+     100% { transform: translateY(0px) rotate(-7deg); }
+   }
+
+
+
+
+   header {
+     min-height: 92vh;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     padding: 76px 20px 40px;
+   }
+
+
+
+
+   .hero {
+     width: min(1180px, 95%);
+     display: grid;
+     grid-template-columns: 1.08fr 0.92fr;
+     gap: 26px;
+     align-items: center;
+   }
+
+
+
+
+   .hero-left,
+   .hero-right,
+   section,
+   nav {
+     backdrop-filter: blur(10px);
+   }
+
+
+
+
+   .hero-left {
+     background: var(--panel-strong);
+     border-radius: 32px;
+     padding: 34px;
+     box-shadow: var(--shadow);
+     border: 3px solid rgba(255,255,255,0.55);
+   }
+
+
+
+
+   .badge {
+     display: inline-block;
+     padding: 10px 16px;
+     border-radius: 999px;
+     background: linear-gradient(90deg, #60a5fa, #34d399);
+     color: white;
+     font-weight: 800;
+     letter-spacing: 0.4px;
+     font-size: 13px;
+     margin-bottom: 16px;
+     box-shadow: 0 8px 18px rgba(96,165,250,0.22);
+   }
+
+
+
+
+   header h1 {
+     font-size: clamp(34px, 5vw, 60px);
+     line-height: 1.02;
+     margin-bottom: 16px;
+     color: #163b67;
+     text-shadow: 0 2px 0 rgba(255,255,255,0.55);
+   }
+
+
+
+
+   header p {
+     color: #406286;
+     font-size: 18px;
+     line-height: 1.7;
+     max-width: 700px;
+   }
+
+
+
+
+   .hero-buttons {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 14px;
+     margin-top: 24px;
+   }
+
+
+
+
+   .hero-link,
+   button,
+   .overlay-btn {
+     border: none;
+     text-decoration: none;
+     padding: 14px 20px;
+     border-radius: 18px;
+     font-weight: 900;
+     font-size: 16px;
+     cursor: pointer;
+     transition: 0.22s ease;
+     box-shadow: 0 12px 22px rgba(0,0,0,0.12);
+   }
+
+
+
+
+   .hero-link:hover,
+   button:hover,
+   .overlay-btn:hover {
+     transform: translateY(-3px) scale(1.01);
+   }
+
+
+
+
+   .hero-link.primary,
+   button.primary,
+   .overlay-btn.primary {
+     background: linear-gradient(90deg, #fbbf24, #fb923c);
+     color: #182233;
+   }
+
+
+
+
+   .hero-link.secondary,
+   button.secondary,
+   .overlay-btn.secondary {
+     background: linear-gradient(90deg, #60a5fa, #8b5cf6);
+     color: white;
+   }
+
+
+
+
+   .hero-right {
+     background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.74));
+     border-radius: 32px;
+     padding: 24px;
+     min-height: 460px;
+     box-shadow: var(--shadow);
+     border: 3px solid rgba(255,255,255,0.55);
+     position: relative;
+     overflow: hidden;
+   }
+
+
+
+
+   .hero-right::before {
+     content: "";
+     position: absolute;
+     inset: 0;
+     background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent 28%, rgba(255,255,255,0.14));
+     pointer-events: none;
+   }
+
+
+
+
+   .hero-board {
+     position: relative;
+     min-height: 406px;
+     border-radius: 28px;
+     overflow: hidden;
+     background:
+       radial-gradient(circle at 18% 16%, rgba(255,255,255,0.8) 0 5%, transparent 6%),
+       radial-gradient(circle at 74% 14%, rgba(255,255,255,0.65) 0 4%, transparent 5%),
+       linear-gradient(180deg, #a5f3fc 0%, #d9f99d 44%, #fde68a 100%);
+     border: 3px solid rgba(255,255,255,0.58);
+   }
+
+
+
+
+   .hero-track {
+     position: absolute;
+     inset: 18px;
+     border-radius: 26px;
+     background: rgba(255,255,255,0.22);
+   }
+
+
+
+
+   .hero-path {
+     position: absolute;
+     inset: 30px;
+     pointer-events: none;
+   }
+
+
+
+
+   .hero-node {
+     position: absolute;
+     width: 70px;
+     height: 70px;
+     border-radius: 22px;
+     border: 4px solid rgba(255,255,255,0.92);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-weight: 900;
+     color: #243141;
+     box-shadow: 0 8px 0 rgba(0,0,0,0.08);
+   }
+
+
+
+
+   .hero-node.a { left: 18px; bottom: 24px; background: #fef08a; }
+   .hero-node.b { left: 108px; bottom: 118px; background: #86efac; }
+   .hero-node.c { left: 205px; bottom: 42px; background: #93c5fd; }
+   .hero-node.d { left: 288px; top: 96px; background: #f9a8d4; }
+   .hero-node.e { right: 112px; top: 26px; background: #c4b5fd; }
+   .hero-node.f { right: 20px; top: 104px; background: #fdba74; }
+
+
+
+
+   .monster-badge,
+   .goal-badge {
+     position: absolute;
+     padding: 14px 16px;
+     border-radius: 22px;
+     font-weight: 900;
+     color: white;
+     box-shadow: 0 12px 22px rgba(0,0,0,0.15);
+     text-align: center;
+   }
+
+
+
+
+   .monster-badge {
+     left: 24px;
+     top: 30px;
+     background: linear-gradient(180deg, #22c55e, #16a34a);
+     transform: rotate(-6deg);
+   }
+
+
+
+
+   .goal-badge {
+     right: 18px;
+     bottom: 24px;
+     background: linear-gradient(180deg, #ef4444, #f97316);
+     transform: rotate(8deg);
+   }
+
+
+
+
+   nav {
+     position: sticky;
+     top: 0;
+     z-index: 30;
+     display: flex;
+     justify-content: center;
+     flex-wrap: wrap;
+     gap: 10px;
+     padding: 12px;
+     width: min(1180px, 95%);
+     margin: 0 auto;
+     border-radius: 26px;
+     background: rgba(255,255,255,0.78);
+     border: 3px solid rgba(255,255,255,0.5);
+     box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+   }
+
+
+
+
+   nav a {
+     text-decoration: none;
+     color: #244163;
+     padding: 11px 16px;
+     border-radius: 999px;
+     font-size: 14px;
+     font-weight: 800;
+     background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.58));
+     border: 2px solid rgba(86, 160, 255, 0.12);
+     transition: 0.2s ease;
+   }
+
+
+
+
+   nav a:hover {
+     transform: translateY(-2px);
+     background: linear-gradient(90deg, #60a5fa, #34d399);
+     color: white;
+   }
+
+
+
+
+   .container {
+     width: min(1180px, 95%);
+     margin: 28px auto 60px;
+   }
+
+
+
+
+   section {
+     background: var(--panel);
+     border-radius: 28px;
+     padding: 28px;
+     margin-bottom: 22px;
+     box-shadow: var(--shadow);
+     border: 3px solid rgba(255,255,255,0.5);
+   }
+
+
+
+
+   h2 {
+     font-size: clamp(26px, 3.1vw, 38px);
+     margin-bottom: 16px;
+     color: #1c4d82;
+   }
+
+
+
+
+   h3 { color: #234268; }
+
+
+
+
+   p {
+     color: #406286;
+     line-height: 1.7;
+     font-size: 16px;
+   }
+
+
+
+
+   .tag-list {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 12px;
+     margin-top: 18px;
+   }
+
+
+
+
+   .tag {
+     padding: 11px 15px;
+     border-radius: 999px;
+     font-weight: 900;
+     color: #17325c;
+     background: linear-gradient(90deg, #fef3c7, #d9f99d);
+     border: 2px solid rgba(23,50,92,0.08);
+   }
+
+
+
+
+   .cards {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+     gap: 18px;
+     margin-top: 18px;
+   }
+
+
+
+
+   .card {
+     background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.62));
+     border-radius: 22px;
+     padding: 18px;
+     border: 2px solid rgba(255,255,255,0.65);
+     box-shadow: 0 12px 24px rgba(30, 64, 175, 0.08);
+     transition: 0.22s ease;
+   }
+
+
+
+
+   .card:hover {
+     transform: translateY(-6px) rotate(-1deg);
+   }
+
+
+
+
+   .member-card { text-align: center; }
+
+
+
+
+   .member-photo {
+     width: 100%;
+     height: 180px;
+     border-radius: 18px;
+     margin-bottom: 12px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     color: white;
+     font-weight: 900;
+     padding: 14px;
+     border: 3px dashed rgba(255,255,255,0.6);
+     box-shadow: inset 0 0 0 2px rgba(255,255,255,0.22);
+     overflow: hidden;
+     background-size: cover;
+     background-position: center;
+   }
+
+
+
+
+   .member-photo.one { background-image: linear-gradient(135deg, #60a5fa, #8b5cf6); }
+   .member-photo.two { background-image: linear-gradient(135deg, #34d399, #60a5fa); }
+   .member-photo.three { background-image: linear-gradient(135deg, #fb7185, #fbbf24); }
+   .member-photo.four { background-image: linear-gradient(135deg, #f472b6, #a78bfa); }
+   .member-photo.five { background-image: linear-gradient(135deg, #22c55e, #fde047); }
+
+
+
+
+   .member-role {
+     color: #f97316;
+     font-weight: 800;
+     font-size: 14px;
+     margin-top: 6px;
+   }
+
+
+
+
+   .plan-table {
+     width: 100%;
+     border-collapse: collapse;
+     margin-top: 14px;
+     overflow: hidden;
+     border-radius: 20px;
+   }
+
+
+
+
+   .plan-table th,
+   .plan-table td {
+     border: 2px solid rgba(255,255,255,0.7);
+     padding: 13px;
+     text-align: left;
+     vertical-align: top;
+     color: #29486d;
+   }
+
+
+
+
+   .plan-table th {
+     background: linear-gradient(90deg, #60a5fa, #34d399);
+     color: white;
+   }
+
+
+
+
+   .plan-table tr:nth-child(even) td {
+     background: rgba(255,255,255,0.45);
+   }
+
+
+
+
+   .two-col {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 22px;
+   }
+
+
+
+
+   .media-box,
+   .video-box {
+     background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.58));
+     border-radius: 22px;
+     overflow: hidden;
+     border: 2px solid rgba(255,255,255,0.65);
+     box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+   }
+
+
+
+
+   .slideshow {
+     position: relative;
+     height: 320px;
+     border-radius: 22px;
+     overflow: hidden;
+     border: 2px solid rgba(255,255,255,0.65);
+     box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+   }
+
+
+
+
+   .slide {
+     position: absolute;
+     inset: 0;
+     opacity: 0;
+     transition: opacity 0.8s ease;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     padding: 24px;
+     font-size: clamp(24px, 3vw, 34px);
+     font-weight: 900;
+     color: white;
+     text-shadow: 0 3px 10px rgba(0,0,0,0.25);
+   }
+
+
+
+
+   .slide.active { opacity: 1; }
+
+
+
+
+   .slide.one {
+     background: linear-gradient(135deg, rgba(96,165,250,0.9), rgba(52,211,153,0.9));
+   }
+
+
+
+
+   .slide.two {
+     background: linear-gradient(135deg, rgba(244,114,182,0.85), rgba(251,191,36,0.88));
+   }
+
+
+
+
+   .slide.three {
+     background: linear-gradient(135deg, rgba(139,92,246,0.9), rgba(96,165,250,0.82));
+   }
+
+
+
+
+   .slide-bubbles {
+     position: absolute;
+     inset: 0;
+     pointer-events: none;
+     background:
+       radial-gradient(circle at 20% 20%, rgba(255,255,255,0.22) 0 8%, transparent 9%),
+       radial-gradient(circle at 70% 32%, rgba(255,255,255,0.16) 0 8%, transparent 9%),
+       radial-gradient(circle at 55% 78%, rgba(255,255,255,0.14) 0 8%, transparent 9%);
+   }
+
+
+
+
+   .media-placeholder {
+     min-height: 320px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     padding: 24px;
+     color: #27466d;
+     font-weight: 800;
+     background: linear-gradient(180deg, #dbeafe, #fef3c7);
+   }
+
+
+
+
+   .media-caption {
+     padding: 14px 16px;
+     color: #406286;
+     font-weight: 700;
+   }
+
+
+
+
+   .process {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+     gap: 16px;
+     margin-top: 18px;
+   }
+
+
+
+
+   .step {
+     padding: 20px;
+     border-radius: 22px;
+     text-align: center;
+     color: white;
+     box-shadow: 0 14px 22px rgba(0,0,0,0.08);
+     border: 2px solid rgba(255,255,255,0.45);
+   }
+
+
+
+
+   .step:nth-child(1) { background: linear-gradient(135deg, #60a5fa, #34d399); }
+   .step:nth-child(2) { background: linear-gradient(135deg, #fb7185, #fbbf24); }
+   .step:nth-child(3) { background: linear-gradient(135deg, #22c55e, #84cc16); }
+   .step:nth-child(4) { background: linear-gradient(135deg, #8b5cf6, #60a5fa); }
+   .step:nth-child(5) { background: linear-gradient(135deg, #f97316, #ef4444); }
+   .step:nth-child(6) { background: linear-gradient(135deg, #14b8a6, #3b82f6); }
+
+
+
+
+   .demo-box {
+     display: grid;
+     grid-template-columns: 1.06fr 0.94fr;
+     gap: 24px;
+     align-items: start;
+     margin-bottom: 0;
+   }
+
+
+
+
+   .board-shell {
+     margin-bottom: 0;
+     position: relative;
+     border-radius: 30px;
+     padding: 24px;
+     background: linear-gradient(180deg, #d8fbff 0%, #ebffd6 44%, #ffe58e 100%);
+     border: 3px solid rgba(255,255,255,0.65);
+     box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+     overflow: hidden;
+   }
+
+
+
+
+   .board-shell::before {
+     content: "";
+     position: absolute;
+     inset: 0;
+     background:
+       radial-gradient(circle at 16% 18%, rgba(255,255,255,0.75) 0 5%, transparent 6%),
+       radial-gradient(circle at 78% 12%, rgba(255,255,255,0.6) 0 5%, transparent 6%),
+       radial-gradient(circle at 84% 78%, rgba(255,255,255,0.5) 0 5%, transparent 6%);
+     pointer-events: none;
+   }
+
+
+
+
+   .board-labels {
+     display: flex;
+     justify-content: space-between;
+     gap: 10px;
+     margin-bottom: 18px;
+     flex-wrap: wrap;
+   }
+
+
+
+
+   .pill {
+     padding: 10px 14px;
+     border-radius: 999px;
+     font-weight: 900;
+     color: white;
+     box-shadow: 0 8px 14px rgba(0,0,0,0.08);
+   }
+
+
+
+
+   .pill.start { background: linear-gradient(90deg, #22c55e, #16a34a); }
+   .pill.trap { background: linear-gradient(90deg, #ef4444, #f97316); }
+   .pill.boost { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+   .pill.goal { background: linear-gradient(90deg, #f59e0b, #facc15); color: #1f2937; }
+ 
+   .board {
+     position: relative;
+     display: grid;
+     grid-template-columns: repeat(6, minmax(74px, 1fr));
+     gap: 10px;
+     z-index: 2;
+   }
+   .cell {
+     min-height: 88px;
+     border-radius: 24px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     position: relative;
+     font-weight: 900;
+     font-size: 18px;
+     color: #1f2d3f;
+     border: 4px solid rgba(255,255,255,0.92);
+     box-shadow: 0 9px 0 rgba(0,0,0,0.08);
+     transition: transform 0.18s ease, box-shadow 0.18s ease;
+     overflow: hidden;
+   }
+   .cell::before {
+     content: "";
+     position: absolute;
+     inset: 0;
+     background: linear-gradient(180deg, rgba(255,255,255,0.28), transparent 40%, rgba(255,255,255,0.18));
+     pointer-events: none;
+   }
+   .cell.active {
+     transform: scale(1.04) rotate(-1deg);
+     box-shadow: 0 0 0 5px rgba(255,255,255,0.78), 0 0 24px rgba(59,130,246,0.32), 0 12px 0 rgba(0,0,0,0.08);
+     z-index: 4;
+   }
+   .cell.goal-cell {
+     box-shadow: 0 0 0 4px rgba(255,255,255,0.85), 0 0 20px rgba(251,191,36,0.45), 0 9px 0 rgba(0,0,0,0.08);
+   }
+   .cell.special::after {
+     content: attr(data-effect);
+     position: absolute;
+     bottom: 6px;
+     left: 8px;
+     font-size: 11px;
+     font-weight: 900;
+     color: rgba(31,41,55,0.72);
+     background: rgba(255,255,255,0.56);
+     padding: 4px 7px;
+     border-radius: 999px;
+   }
+   .token {
+     position: absolute;
+     right: 8px;
+     top: 8px;
+     width: 28px;
+     height: 28px;
+     border-radius: 50%;
+     box-shadow: 0 0 0 3px rgba(255,255,255,0.75), 0 6px 12px rgba(0,0,0,0.18);
+     animation: tokenBounce 0.8s infinite alternate;
+   }
+   .token.player1 {
+     background: radial-gradient(circle at 30% 30%, #86efac, #22c55e, #15803d);
+   }
+
+
+
+
+   @keyframes tokenBounce {
+     from { transform: translateY(0); }
+     to { transform: translateY(-4px); }
+   }
+
+
+
+
+         to { filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); }
+
+
+
+
+
+
+
+
+   .panel {
+     background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.72));
+     border-radius: 28px;
+     padding: 22px;
+     border: 3px solid rgba(255,255,255,0.55);
+     box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+   }
+
+
+
+
+   .score-cards {
+     display: grid;
+     grid-template-columns: repeat(2, 1fr);
+     gap: 12px;
+     margin-bottom: 16px;
+   }
+
+
+
+
+   .score-card {
+     padding: 14px;
+     border-radius: 18px;
+     color: white;
+     font-weight: 900;
+     min-height: 90px;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+   }
+
+
+
+
+   .score-card:nth-child(1) { background: linear-gradient(135deg, #22c55e, #16a34a); }
+   .score-card:nth-child(2) { background: linear-gradient(135deg, #ef4444, #f97316); }
+
+
+
+
+   .score-card small {
+     opacity: 0.92;
+     font-size: 13px;
+   }
+
+
+
+
+   .score-card strong {
+     font-size: 28px;
+     margin-top: 4px;
+   }
+
+
+
+
+   .meta-row {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 12px;
+     margin-bottom: 16px;
+   }
+
+
+
+
+   .meta-box {
+     background: linear-gradient(180deg, #e0f2fe, #fef3c7);
+     border-radius: 18px;
+     padding: 14px;
+     color: #234268;
+     font-weight: 800;
+     border: 2px solid rgba(255,255,255,0.7);
+   }
+
+
+
+
+   .meta-box .big {
+     display: block;
+     font-size: 28px;
+     margin-top: 4px;
+     color: #15365e;
+   }
+
+
+
+
+   .dice-wrap {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 10px;
+     margin: 12px 0 10px;
+   }
+
+
+
+
+   .dice {
+     width: 126px;
+     height: 126px;
+     margin: 0 auto;
+     border-radius: 28px;
+     background: linear-gradient(180deg, #ffffff, #f8fafc);
+     border: 5px solid #1f2937;
+     box-shadow: 0 14px 24px rgba(0,0,0,0.18);
+     display: grid;
+     grid-template-columns: repeat(3, 1fr);
+     grid-template-rows: repeat(3, 1fr);
+     gap: 6px;
+     padding: 14px;
+     transition: transform 0.15s ease;
+   }
+
+
+
+
+   .pip {
+     width: 14px;
+     height: 14px;
+     background: #1f2937;
+     border-radius: 50%;
+     align-self: center;
+     justify-self: center;
+     opacity: 0;
+     transition: opacity 0.08s ease;
+   }
+
+
+
+
+   .show-1 .p5,
+   .show-2 .p1, .show-2 .p9,
+   .show-3 .p1, .show-3 .p5, .show-3 .p9,
+   .show-4 .p1, .show-4 .p3, .show-4 .p7, .show-4 .p9,
+   .show-5 .p1, .show-5 .p3, .show-5 .p5, .show-5 .p7, .show-5 .p9,
+   .show-6 .p1, .show-6 .p3, .show-6 .p4, .show-6 .p6, .show-6 .p7, .show-6 .p9 {
+     opacity: 1;
+   }
+
+
+
+
+   .rolling {
+     animation: rollDance 0.12s infinite alternate;
+   }
+
+
+
+
+   @keyframes rollDance {
+     from { transform: rotate(-8deg) scale(1); }
+     to { transform: rotate(8deg) scale(1.08); }
+   }
+
+
+
+
+   button {
+     width: 100%;
+     margin-top: 10px;
+   }
+
+
+
+
+   .status {
+     margin-top: 16px;
+     background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.72));
+     border-radius: 18px;
+     padding: 16px;
+     min-height: 110px;
+     border: 2px solid rgba(255,255,255,0.7);
+     color: #375678;
+     font-weight: 700;
+     line-height: 1.65;
+   }
+
+
+
+
+   .log-box {
+     margin-top: 12px;
+     border-radius: 18px;
+     overflow: hidden;
+     border: 2px solid rgba(255,255,255,0.7);
+     background: rgba(255,255,255,0.64);
+   }
+
+
+
+
+   .log-title {
+     background: linear-gradient(90deg, #60a5fa, #34d399);
+     color: white;
+     padding: 12px 14px;
+     font-weight: 900;
+   }
+
+
+
+
+   .log-list {
+     list-style: none;
+     max-height: 160px;
+     overflow: auto;
+     padding: 10px 12px;
+   }
+
+
+
+
+   .log-list li {
+     color: #426485;
+     padding: 8px 4px;
+     border-bottom: 1px dashed rgba(66,100,133,0.18);
+     font-size: 14px;
+   }
+
+
+
+
+   .circuit-layout {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 20px;
+     align-items: start;
+   }
+
+
+
+
+   .video-mock {
+     position: relative;
+     min-height: 320px;
+     background: linear-gradient(180deg, #dbeafe, #fef3c7);
+     border-radius: 22px;
+     overflow: hidden;
+   }
+
+
+
+
+   .video-top {
+     background: linear-gradient(90deg, #60a5fa, #8b5cf6);
+     color: white;
+     padding: 12px 16px;
+     font-weight: 900;
+   }
+
+
+
+
+   .video-screen {
+     margin: 18px;
+     height: 220px;
+     border-radius: 18px;
+     background: linear-gradient(135deg, #60a5fa, #34d399, #fbbf24, #f472b6);
+     background-size: 250% 250%;
+     animation: videoGlow 8s ease infinite;
+     position: relative;
+     overflow: hidden;
+     box-shadow: inset 0 0 0 3px rgba(255,255,255,0.35);
+   }
+
+
+
+
+   .video-screen::before {
+     content: "▶";
+     position: absolute;
+     left: 50%;
+     top: 50%;
+     transform: translate(-50%, -50%);
+     font-size: 76px;
+     color: rgba(255,255,255,0.92);
+     text-shadow: 0 4px 16px rgba(0,0,0,0.18);
+   }
+
+
+
+
+   .video-screen::after {
+     content: "Төслийн video / slideshow";
+     position: absolute;
+     left: 16px;
+     bottom: 14px;
+     color: white;
+     font-weight: 900;
+     letter-spacing: 0.4px;
+     text-shadow: 0 2px 6px rgba(0,0,0,0.16);
+   }
+
+
+
+
+   @keyframes videoGlow {
+     0% { background-position: 0% 50%; }
+     50% { background-position: 100% 50%; }
+     100% { background-position: 0% 50%; }
+   }
+
+
+
+
+   .code-box {
+     background: #152033;
+     color: #e2e8f0;
+     padding: 18px;
+     border-radius: 20px;
+     overflow-x: auto;
+     font-family: Consolas, monospace;
+     font-size: 14px;
+     line-height: 1.7;
+     box-shadow: inset 0 0 0 2px rgba(255,255,255,0.06);
+   }
+
+
+
+
+   .mini-notes {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+     gap: 14px;
+     margin-top: 16px;
+   }
+
+
+
+
+   .note-card {
+     padding: 16px;
+     border-radius: 18px;
+     background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.64));
+     border: 2px solid rgba(255,255,255,0.7);
+     color: #36567a;
+     font-weight: 700;
+   }
+
+
+
+
+   footer {
+     text-align: center;
+     padding: 10px 20px 46px;
+     color: #2e5178;
+     font-weight: 800;
+   }
+
+
+
+
+   .confetti {
+     position: fixed;
+     width: 12px;
+     height: 18px;
+     border-radius: 4px;
+     top: -24px;
+     z-index: 70;
+     pointer-events: none;
+     animation: confettiFall linear forwards;
+   }
+
+
+
+
+   @keyframes confettiFall {
+     0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+     100% { transform: translateY(110vh) rotate(720deg); opacity: 0.95; }
+   }
+
+
+
+
+   @media (max-width: 980px) {
+     .hero,
+     .overlay-body,
+     .two-col,
+     .demo-box,
+     .circuit-layout {
+       grid-template-columns: 1fr;
+     }
+
+
+
+
+     .score-cards,
+     .meta-row {
+       grid-template-columns: 1fr 1fr;
+     }
+
+
+
+
+     nav {
+       width: min(95%, 700px);
+     }
+
+
+
+
+     header {
+       min-height: auto;
+     }
+   }
+
+
+
+
+   @media (max-width: 700px) {
+     .board {
+       grid-template-columns: repeat(3, minmax(84px, 1fr));
+     }
+
+
+
+
+     .score-cards,
+     .meta-row {
+       grid-template-columns: 1fr;
+     }
+
+
+
+
+     .overlay-body {
+       padding: 24px;
+     }
+
+
+
+
+     .hero-left,
+     .hero-right,
+     section {
+       padding: 22px;
+     }
+
+
+
+
+     nav {
+       top: 8px;
+     }
+   }
+ </style>
+</head>
+<body>
+ <div class="shape a"></div>
+ <div class="shape b"></div>
+ <div class="shape c"></div>
+
+
+
+
+ <div class="winner-overlay hidden" id="winnerOverlay">
+   <div class="overlay-card">
+     <div class="overlay-top">🎉 Баяр хүргэе🎉</div>
+     <div class="overlay-body">
+       <div>
+         <h2 class="overlay-title" id="winnerTitle">Ялагч тодорлоо!</h2>
+         <p class="overlay-text" id="winnerText">
+           Тоглоом дууслаа.
+         </p>
+         <div class="overlay-tags" id="winnerTags">
+           <div class="overlay-tag">🏁 Барианд хүрлээ</div>
+         </div>
+         <div style="display:flex;gap:12px;flex-wrap:wrap;">
+           <button class="overlay-btn primary" id="playAgainBtn">Дахин тоглох</button>
+           <button class="overlay-btn secondary" id="closeWinnerBtn">Хаах</button>
+         </div>
+       </div>
+       <div class="start-preview">
+         <div class="preview-road">
+           <div class="path-piece p1">GO</div>
+           <div class="path-piece p2">WOW</div>
+           <div class="path-piece p3">STAR</div>
+           <div class="path-piece p4">WIN</div>
+           <div class="path-piece p5">🏆</div>
+           <div class="preview-arrow arrow1"></div>
+           <div class="preview-arrow arrow2"></div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+
+
+
+
+ <header>
+   <div class="hero">
+     <div class="hero-left">
+       <div class="badge">BOARD GAME + ARDUINO + WEBSITE DEMO</div>
+       <h1>Та битгий уурлаарай хөлөгт тоглоом</h1>
+       <p>
+         Энэ хувилбар нь оруулсан жишээ зурган шиг илүү өнгөлөг, хүүхдэд сонирхолтой,
+         arcade биш board-game уур амьсгалтай болгож шинэчлэгдсэн final website юм.
+       </p>
+       <div class="hero-buttons">
+         <a class="hero-link primary" href="#demo">Тоглоом тоглох</a>
+         <a class="hero-link secondary" href="#circuit">Схем харах</a>
+       </div>
+     </div>
+     <div class="hero-right">
+       <div class="hero-board">
+         <div class="hero-track"></div>
+         <div class="monster-badge">🐲 Special Cell</div>
+         <div class="goal-badge">🏁 Goal</div>
+         <div class="hero-path">
+           <div class="hero-node a">1</div>
+           <div class="hero-node b">8</div>
+           <div class="hero-node c">14</div>
+           <div class="hero-node d">19</div>
+           <div class="hero-node e">25</div>
+           <div class="hero-node f">30</div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </header>
+
+
+
+
+ <nav>
+   <a href="#intro">Төслийн тухай</a>
+   <a href="#team">Багийн гишүүд</a>
+   <a href="#plan">Төлөвлөгөө</a>
+   <a href="#media">Видео / Слайд</a>
+   <a href="#parts">Эд анги</a>
+   <a href="#circuit">Схем</a>
+   <a href="#demo">Тоглоом</a>
+ </nav>
+
+
+
+
+ <div class="container">
+   <section id="intro">
+     <h2>Төслийн танилцуулга</h2>
+     <p>
+       Энэхүү төсөл нь сурагчдын завсарлагааны цагийг зөв боловсон өнгөрүүлэх зорилгоор
+       “Та битгий уурлаарай” тоглоомыг автомат болон дижитал хэлбэрт оруулсан бүтээл юм.
+       Та товч дарж шоо шидэхэд санамсаргүй тоо гарч, тоглогчийн дүрс замаар урагшилна.
+       Зарим special нүд дээр bonus үсрэлт эсвэл ухралт өгч тоглоомыг илүү сонирхолтой болгоно.
+     </p>
+     <div class="tag-list">
+       <div class="tag">1 тоглогч</div>
+       <div class="tag">Special cell</div>
+       <div class="tag">Arduino mockup</div>
+     </div>
+       
+   </section>
+
+
+
+
+   <section id="team">
+     <h2>Багийн гишүүд</h2>
+     <p>Доорх card хэсгүүд дээр жинхэнэ зургаа шууд background-image-ээр солиод ашиглаж болно.</p>
+     <div class="cards">
+       <div class="card member-card">
+         <div class="member-photo one"><img src="https://i.ibb.co/rKGYWdnY/Screenshot-2026-05-07-at-12-59-13.png" width="200px" height="250px"></div>
+         <h3>Хүсэлбаяр</h3>
+         <div class="member-role">Дизайн / биет</div>
+       </div>
+       <div class="card member-card">
+         <div class="member-photo two"><img src="https://i.ibb.co/VWFrt39D/Screenshot-2026-05-07-at-12-59-24.png" width="200px" height="250px"></div>
+         <h3>Ган-Од</h3>
+         <div class="member-role">Код бичих</div>
+       </div>
+       <div class="card member-card">
+         <div class="member-photo three"><img src="https://i.ibb.co/WpK5K5nv/Screenshot-2026-05-07-at-12-52-43.png" width="200px" height="250px"></div>
+         <h3>Анужин</h3>
+         <div class="member-role">Баримт бичиг</div>
+       </div>
+       <div class="card member-card">
+         <div class="member-photo four"><img src="https://i.ibb.co/PspJ9T4C/Screenshot-2026-05-07-at-12-59-39.png" width="200px" height="250px"></div>
+         <h3>Сарандаваа</h3>
+         <div class="member-role">Видео / медиа</div>
+       </div>
+       <div class="card member-card">
+         <div class="member-photo five"><img src="https://i.ibb.co/Wv9prt6f/Screenshot-2026-05-07-at-13-01-32.png" width="200px" height="250px"></div>
+         <h3>Золжаргал</h3>
+         <div class="member-role">Веб сайт</div>
+       </div>
+     </div>
+   </section>
+
+
+
+
+   <section id="plan">
+     <h2>Хэрэгжүүлэх төлөвлөгөө</h2>
+     <div style="overflow-x:auto;">
+       <table class="plan-table">
+         <tr>
+           <th>Хийх ажил</th>
+           <th>Хэн хариуцах</th>
+           <th>Хэн туслах</th>
+           <th>Хугацаа</th>
+           <th>Зорилго</th>
+         </tr>
+         <tr>
+           <td>Хөлгийн дизайн гаргах</td>
+           <td>Хүсэлбаяр</td>
+           <td>Багийн бүх гишүүд</td>
+           <td>4 сарын дундаар</td>
+           <td>Төслийн үндсэн харагдац бэлтгэх</td>
+         </tr>
+         <tr>
+           <td>Код бичих</td>
+           <td>Ган-Од</td>
+           <td>Золжаргал</td>
+           <td>4 сарын дундаар</td>
+           <td>Тоглоомын үндсэн логик ажиллуулах</td>
+         </tr>
+         <tr>
+           <td>Схем угсрах</td>
+           <td>Хүсэлбаяр</td>
+           <td>Ган-Од</td>
+           <td>4 сарын сүүлээр</td>
+           <td>Arduino хэсгийг турших</td>
+         </tr>
+         <tr>
+           <td>Видео, зураг бэлтгэх</td>
+           <td>Сарандаваа</td>
+           <td>Анужин</td>
+           <td>4 сарын сүүлээр</td>
+           <td>Танилцуулгын медиа хэсгийг бүрдүүлэх</td>
+         </tr>
+         <tr>
+           <td>Веб final хувилбар</td>
+           <td>Золжаргал</td>
+           <td>Багийн бүх гишүүд</td>
+           <td>DemoDay-оос өмнө</td>
+           <td>Төслийн танилцуулгыг нэг дор үзүүлэх</td>
+         </tr>
+       </table>
+     </div>
+   </section>
+
+
+
+
+   <section>
+     <h2>Санаагаа хэрхэн олсон бэ?</h2>
+     <p>
+       Уламжлалт board game-ийг илүү хөгжилтэй болгож, товч дарахад санамсаргүй үр дүн гардаг,
+       дүрс нь автомат урагшилдаг ухаалаг хувилбар хийх санаанаас энэ төсөл эхэлсэн.
+       Ингэснээр энгийн хөлөгт тоглоомыг Arduino болон вебтэй нэгтгэсэн бүтээл болж өргөжсөн.
+     </p>
+   </section>
+
+
+
+<section id="media">
+  <h2>Зураг / Видео</h2>
+
+  <div class="two-col">
+
+    <!-- SLIDESHOW -->
+    <div>
+
+      <div class="slideshow">
+
+        <div class="slide one active">
+          <div class="slide-bubbles"></div>
+          <img
+            src="https://i.ibb.co/cSw9L50c/IMG-2219.avif"
+            alt="slide1"
+            width="100%"
+            height="100%"
+            style="object-fit:cover;"
+          >
+        </div>
+
+        <div class="slide two">
+          <div class="slide-bubbles"></div>
+          <img
+            src="https://i.ibb.co/1Yj40p0g/IMG-2003.avif"
+            alt="slide2"
+            width="100%"
+            height="100%"
+            style="object-fit:cover;"
+          >
+        </div>
+
+        <div class="slide three">
+          <div class="slide-bubbles"></div>
+          <img
+            src="https://i.ibb.co/8DxF18w1/IMG-2208.avif"
+            alt="slide3"
+            width="100%"
+            height="100%"
+            style="object-fit:cover;"
+          >
+        </div>
+
+        <div class="slide four">
+          <div class="slide-bubbles"></div>
+          <img
+            src="https://i.ibb.co/qFDw5n8j/IMG-2080.avif"
+            alt="slide4"
+            width="100%"
+            height="100%"
+            style="object-fit:cover;"
+          >
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- VIDEO -->
+    <div class="video-box">
+      <div class="video-mock">
+
+        <div class="video-top">
+          🎬 Төслийн видео
+        </div>
+
+        <video
+          controls
+          autoplay
+          muted
+          loop
+          style="
+            width:100%;
+            height:320px;
+            object-fit:cover;
+            border-radius:0 0 22px 22px;
+          "
+        >
+          <source src="https://streamable.com/za1cpy">
+        </video>
+
+      </div>
+
+      <div class="media-caption">
+        Төсөл бүтээх үйл явц
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+   <section id="parts">
+     <h2>Шаардлагатай эд анги</h2>
+     <div class="cards">
+       <div class="card"><strong>Arduino Uno</strong><br />Үндсэн удирдлага</div>
+       <div class="card"><strong>Push Button</strong><br />Шоо шидэх товч</div>
+       <div class="card"><strong>LCD Display</strong><br />Мэдээлэл харуулах</div>
+       <div class="card"><strong>Stepper Motor</strong><br />Дүрс хөдөлгөх</div>
+       <div class="card"><strong>ULN2003</strong><br />Моторын драйвер</div>
+       <div class="card"><strong>8x8 Matrix LED</strong><br />Шооны дүрс харуулах</div>
+       <div class="card"><strong>Breadboard</strong><br />Холболтын суурь</div>
+       <div class="card"><strong>Jumper Wire</strong><br />Холболт хийх</div>
+     </div>
+   </section>
+
+
+
+
+   <section id="circuit">
+     <h2>Arduino схемийн зураг / animation хэсэг</h2>
+     <div class="circuit-layout">
+       <div class="media-box">
+         <div class="media-placeholder">
+           <img src="https://i0.wp.com/dronebotworkshop.com/wp-content/uploads/2018/02/28YBJ-ULN2003-Arduino-2.jpg?w=768&ssl=1" alt="zurg" width="500px" height="350px">
+         </div>
+         <div class="media-caption">
+           Жишээ: Arduino Uno → ULN2003 → Stepper Motor, Push Button, LCD, Matrix LED.
+         </div>
+       </div>
+       <div class="media-box">
+           <div class="media-placeholder">
+             <img src="https://i.ibb.co/7xHwZM0C/Screenshot-2026-05-07-at-14-10-21.png" width="600px" height="380px">
+           </div>
+           <div class="media-caption">
+             Жишээ: Arduino Uno → ULN2003 → Stepper Motor, Push Button, LCD, Matrix LED.
+           </div>
+         </div>
+     </div>
+   </section>
+
+
+
+
+   <section>
+     <h2>Төсөл бүтээх үйл явц</h2>
+     <div class="process">
+       <div class="step"><h3>1</h3><p>Санаа гаргах</p></div>
+       <div class="step"><h3>2</h3><p>Замын дизайн</p></div>
+       <div class="step"><h3>3</h3><p>Схем угсрах</p></div>
+       <div class="step"><h3>4</h3><p>Код бичих</p></div>
+       <div class="step"><h3>5</h3><p>Турших</p></div>
+       <div class="step"><h3>6</h3><p>Веб танилцуулах</p></div>
+     </div>
+   </section>
+
+
+
+
+   <section>
+     <h2>Тоглох заавар</h2>
+     <p>
+       Та шоо шиднэ. Гарсан тоогоороо урагшилна. Зарим нүд дээр boost буюу
+       bonus урагшилна, зарим нүд дээр trap буюу ухарна. Та 30-р нүд буюу goal дээр
+       хүрвэл ялна.
+     </p>
+     <div class="mini-notes">
+       <div class="note-card">🟢 Start: 1-р нүд</div>
+       <div class="note-card">🔵 Boost: нэмэлт урагшлалт</div>
+       <div class="note-card">🔴 Trap: ухралт</div>
+       <div class="note-card">🏁 Goal: 30-р нүд</div>
+     </div>
+   </section>
+
+
+
+
+   <section id="demo">
+     <h2>Тоглоом тоглох</h2>
+     <div class="demo-box">
+       <div class="board-shell">
+         <div class="board-labels">
+           <div class="pill start">Эхлэл</div>
+           <div class="pill trap">Trap</div>
+           <div class="pill boost">Boost</div>
+           <div class="pill goal">Төгсгөл</div>
+         </div>
+         <div class="board" id="board"></div>
+         <div class="bottom-row" style="display:grid;grid-template-rows:1fr;gap:16px;margin-top:0;align-items:start;">  
+           <div class="status" id="status">
+             Тоглоом эхлэхэд бэлэн. Шоо шидэж эхлүүлнэ үү.
+           </div>
+         </div>
+       </div>
+
+
+
+
+       <div class="panel">
+         <div class="score-cards">
+           <div class="score-card">
+             <small>Таны байрлал</small>
+             <strong id="p1Pos">1</strong>
+           </div>
+           <div class="score-card" style="background: linear-gradient(135deg, #60a5fa, #8b5cf6);">
+             <small>Зорилго</small>
+             <strong>30</strong>
+           </div>
+         </div>
+         <div class="meta-row">
+           <div class="meta-box">⏱ Time<span class="big" id="timer">0s</span></div>
+           <div class="meta-box">🎯 Score<span class="big" id="score">0</span></div>
+         </div>
+         <div class="meta-row">
+           <div class="meta-box">Тоглогчийн тоо<span class="big">1</span></div>
+           <div class="meta-box">Сүүлийн шоо<span class="big" id="lastRoll">-</span></div>
+         </div>
+
+
+
+
+         <div class="dice-wrap">
+           <div class="dice show-1" id="dice">
+             <span class="pip p1"></span><span class="pip p2"></span><span class="pip p3"></span>
+             <span class="pip p4"></span><span class="pip p5"></span><span class="pip p6"></span>
+             <span class="pip p7"></span><span class="pip p8"></span><span class="pip p9"></span>
+           </div>
+           <div style="font-weight:900;color:#36567a;line-height:1.7; text-align:center;">
+             🎲 Шоо шидээд<br />тоглогчийг хөдөлгөнө
+           </div>
+         </div>
+
+
+
+
+         <button class="primary" id="rollBtn">Шоо шидэх</button>
+         <button class="secondary" id="soundBtn">🔊 Sound: ON</button>
+         <button class="secondary" id="resetBtn">🔄 Дахин эхлүүлэх</button>
+       </div>
+     </div>
+   </section>
+ </div>
+
+
+
+
+ <footer>
+   НЭСТ ЭДҮКЭЙШН АЙ ТИ ДУНД СУРГУУЛЬ •  DemoDay website
+ </footer>
+
+
+
+
+ <script>
+   const board = document.getElementById('board');
+   const dice = document.getElementById('dice');
+   const rollBtn = document.getElementById('rollBtn');
+   const soundBtn = document.getElementById('soundBtn');
+   const resetBtn = document.getElementById('resetBtn');
+   const statusBox = document.getElementById('status');
+   const timerEl = document.getElementById('timer');
+   const scoreEl = document.getElementById('score');
+   const lastRoll = document.getElementById('lastRoll');
+   const p1Pos = document.getElementById('p1Pos');
+   const slides = document.querySelectorAll('.slide');
+       const winnerOverlay = document.getElementById('winnerOverlay');
+   const winnerTitle = document.getElementById('winnerTitle');
+   const winnerText = document.getElementById('winnerText');
+   const winnerTags = document.getElementById('winnerTags');
+       const playAgainBtn = document.getElementById('playAgainBtn');
+   const closeWinnerBtn = document.getElementById('closeWinnerBtn');
+
+
+
+
+   const totalCells = 30;
+   const cols = 6;
+   const cellColors = [
+     '#fde68a', '#86efac', '#93c5fd', '#f9a8d4', '#c4b5fd', '#fdba74'
+   ];
+
+
+
+
+   const boosts = {
+     4: 3,
+     10: 4,
+     15: 3,
+     21: 4
+   };
+
+
+
+
+   const traps = {
+     8: -3,
+     17: -4,
+     23: -5,
+     29: -3
+   };
+
+
+
+
+   let players = [1];
+   let currentPlayer = 0;
+   let soundOn = true;
+   let isRolling = false;
+   let slideIndex = 0;
+   let audioCtx = null;
+   let time = 0;
+   let score = 0;
+
+
+
+
+   setInterval(() => {
+     time++;
+     if(timerEl) timerEl.textContent = time + 's';
+   }, 1000);
+
+
+
+
+   function ensureAudio() {
+     if (!audioCtx) {
+       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+       if (AudioContextClass) audioCtx = new AudioContextClass();
+     }
+   }
+
+
+
+
+   function playTone(freq, duration, type = 'sine', volume = 0.05) {
+     if (!soundOn) return;
+     ensureAudio();
+     if (!audioCtx) return;
+
+
+
+
+     const osc = audioCtx.createOscillator();
+     const gain = audioCtx.createGain();
+     osc.connect(gain);
+     gain.connect(audioCtx.destination);
+     osc.frequency.value = freq;
+     osc.type = type;
+     gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+     gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+     osc.start();
+     osc.stop(audioCtx.currentTime + duration);
+   }
+
+
+
+
+   function playWinTune() {
+     playTone(880, 0.15, 'triangle', 0.06);
+     setTimeout(() => playTone(1040, 0.18, 'triangle', 0.06), 120);
+     setTimeout(() => playTone(1320, 0.22, 'triangle', 0.07), 240);
+   }
+
+
+
+
+   function getSnakePath(total, columns) {
+     const rows = Math.ceil(total / columns);
+     const path = [];
+
+
+
+
+     for (let row = 0; row < rows; row++) {
+       const start = row * columns + 1;
+       const end = Math.min(start + columns - 1, total);
+       const rowCells = [];
+
+
+
+
+       for (let n = start; n <= end; n++) rowCells.push(n);
+       if (row % 2 === 1) rowCells.reverse();
+       path.push(...rowCells);
+     }
+
+
+
+
+     return path;
+   }
+
+
+
+
+   function setDiceFace(value) {
+     dice.className = 'dice show-' + value;
+   }
+
+
+   function updateScoreboard() {
+     p1Pos.textContent = players[0];
+   }
+
+
+   function drawBoard() {
+     board.innerHTML = '';
+     const path = getSnakePath(totalCells, cols);
+
+
+     path.forEach((num) => {
+       const cell = document.createElement('div');
+       cell.className = 'cell';
+       cell.style.background = cellColors[(num - 1) % cellColors.length];
+
+
+       if (num === 1) {
+         cell.textContent = 'Эхлэл';
+       } else if (num === totalCells) {
+         cell.textContent = 'Төгсгөл';
+         cell.classList.add('goal-cell');
+       } else {
+         cell.textContent = num;
+       }
+
+
+       if (boosts[num]) {
+         cell.classList.add('special');
+         cell.dataset.effect = 'BOOST +' + boosts[num];
+         cell.style.background = 'linear-gradient(180deg, #93c5fd, #60a5fa)';
+       }
+
+
+       if (traps[num]) {
+         cell.classList.add('special');
+         cell.dataset.effect = 'TRAP ' + traps[num];
+         cell.style.background = 'linear-gradient(180deg, #fca5a5, #fb923c)';
+       }
+
+
+       if (players[0] === num) {
+         cell.classList.add('active');
+         const token1 = document.createElement('div');
+         token1.className = 'token player1';
+         cell.appendChild(token1);
+       }
+
+
+
+
+       board.appendChild(cell);
+     });
+   }
+
+
+
+
+   function showWinner(playerIndex, finalCell) {
+     const playerName = 'Та';
+     winnerTitle.textContent = '🏆 Та яллаа!';
+     winnerText.innerHTML = playerName + ' <strong>' + finalCell + '-р нүдэнд</strong> хүрч яллаа.';
+     winnerTags.innerHTML = '';
+
+
+
+
+     winnerOverlay.classList.remove('hidden');
+     playWinTune();
+     makeConfetti();
+   }
+
+
+   function makeConfetti() {
+     const confettiColors = ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
+     for (let i = 0; i < 40; i++) {
+       const piece = document.createElement('div');
+       piece.className = 'confetti';
+       piece.style.left = Math.random() * 100 + 'vw';
+       piece.style.background = confettiColors[i % confettiColors.length];
+       piece.style.animationDuration = (Math.random() * 2 + 2.6) + 's';
+       piece.style.opacity = String(0.8 + Math.random() * 0.2);
+       document.body.appendChild(piece);
+       setTimeout(() => piece.remove(), 5200);
+     }
+   }
+
+
+   function applySpecialCell(pos, playerIndex) {
+     if (boosts[pos]) {
+       players[playerIndex] += boosts[pos];
+       if (players[playerIndex] > totalCells) players[playerIndex] = totalCells;
+       statusBox.innerHTML = '🚀 Та boost нүдэнд буулаа. Нэмэлт +' + boosts[pos] + ' урагшиллаа!';
+       playTone(880, 0.12, 'triangle', 0.06);
+       setTimeout(() => playTone(1100, 0.16, 'triangle', 0.06), 90);
+     }
+
+
+     if (traps[pos]) {
+       players[playerIndex] += traps[pos];
+       if (players[playerIndex] < 1) players[playerIndex] = 1;
+       statusBox.innerHTML = '🐲 Та trap нүдэнд буулаа. ' + Math.abs(traps[pos]) + ' нүд ухарлаа!';
+       playTone(240, 0.18, 'sawtooth', 0.06);
+     }
+   }
+
+
+   function endTurn() {
+     updateScoreboard();
+     rollBtn.disabled = false;
+     isRolling = false;
+   }
+
+
+   function rollDice() {
+     if (isRolling) return;
+     isRolling = true;
+     ensureAudio();
+     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+
+           rollBtn.disabled = true;
+     dice.classList.add('rolling');
+     statusBox.textContent = '🎲 Шоо эргэж байна...';
+     playTone(560, 0.08, 'square', 0.05);
+
+
+     let count = 0;
+     const interval = setInterval(() => {
+       setDiceFace(Math.floor(Math.random() * 6) + 1);
+       count++;
+
+
+       if (soundOn && count % 2 === 0) {
+         playTone(330 + count * 25, 0.04, 'square', 0.03);
+       }
+
+
+       if (count > 12) {
+         clearInterval(interval);
+         dice.classList.remove('rolling');
+
+
+         const value = Math.floor(Math.random() * 6) + 1;
+         const current = 0;
+         const oldPos = players[current];
+
+
+         setDiceFace(value);
+         lastRoll.textContent = value;
+         players[current] += value;
+         score += value;
+         if(scoreEl) scoreEl.textContent = score;
+         if (players[current] > totalCells) players[current] = totalCells;
+
+         playTone(760, 0.14, 'triangle', 0.06);
+         statusBox.innerHTML = '🎯 Та <strong>' + value + '</strong> шидэж ' + oldPos + '-с ' + players[current] + ' руу шилжлээ.';
+
+         drawBoard();
+         updateScoreboard();
+
+         setTimeout(() => {
+           applySpecialCell(players[current], current);
+           drawBoard();
+           updateScoreboard();
+
+
+           if (players[current] >= totalCells) {
+             showWinner(current, players[current]);
+             rollBtn.disabled = false;
+             isRolling = false;
+           } else {
+             endTurn();
+             statusBox.innerHTML += '<br><strong>Дахин шоо шидэж үргэлжлүүлнэ үү.</strong>';
+           }
+         }, 520);
+       }
+     }, 90);
+   }
+
+   function resetGame() {
+     time = 0;
+     score = 0;
+     if(timerEl) timerEl.textContent = '0s';
+     if(scoreEl) scoreEl.textContent = '0';
+     players = [1];
+     currentPlayer = 0;
+     isRolling = false;
+     setDiceFace(1);
+     lastRoll.textContent = '-';
+   
+     statusBox.textContent = 'Тоглоом дахин эхэллээ. Та эхэлнэ.';
+     winnerOverlay.classList.add('hidden');
+     drawBoard();
+     updateScoreboard();
+     playTone(640, 0.09, 'triangle', 0.05);
+     setTimeout(() => playTone(840, 0.12, 'triangle', 0.05), 100);
+   }
+
+   soundBtn.addEventListener('click', () => {
+     soundOn = !soundOn;
+     soundBtn.textContent = soundOn ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+     if (soundOn) playTone(920, 0.09, 'triangle', 0.05);
+   });
+
+   rollBtn.addEventListener('click', rollDice);
+   resetBtn.addEventListener('click', resetGame);
+       playAgainBtn.addEventListener('click', resetGame);
+   closeWinnerBtn.addEventListener('click', () => winnerOverlay.classList.add('hidden'));
+
+   drawBoard();
+   updateScoreboard();
+
+   setInterval(() => {
+     if (!slides.length) return;
+     slides[slideIndex].classList.remove('active');
+     slideIndex = (slideIndex + 1) % slides.length;
+     slides[slideIndex].classList.add('active');
+   }, 2600);
+ </script>
+</body>
+</html>
+
+
